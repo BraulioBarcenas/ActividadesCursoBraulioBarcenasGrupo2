@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,24 +21,25 @@ public class Pedido {
     
     @Id
     @GeneratedValue
-    private int idPedidos;
+    @Column(name = "idPedidos")
+    private Integer idPedidos;
 
     @Column(name = "pedFecha", nullable = false)
     private Date fecha;
     @Column(name = "pedTotal", nullable = false)
-    private int total;
+    private Integer total;
     @Column(name = "pedIVA", nullable = false)
-    private int iva;
+    private Integer iva;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuarios_idUsuario",nullable = false)
     private Usuario usuario;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pagos_idPagos", nullable = false)
     private Pago pago;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "envios_idEnvio", nullable = false)
     private Envio envio;
 }

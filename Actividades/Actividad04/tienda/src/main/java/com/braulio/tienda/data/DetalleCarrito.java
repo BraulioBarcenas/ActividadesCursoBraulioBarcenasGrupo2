@@ -1,7 +1,10 @@
 package com.braulio.tienda.data;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
@@ -15,6 +18,11 @@ import lombok.Setter;
 @Table(name = "detalle_carrito")
 public class DetalleCarrito {
     
+    @Id
+    @GeneratedValue
+    @Column(name = "idDetalleCarrito")
+    private Integer idDetalleCarrito;
+
     @MapsId("idCarrito")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "carrito_idCarrito", nullable = false)

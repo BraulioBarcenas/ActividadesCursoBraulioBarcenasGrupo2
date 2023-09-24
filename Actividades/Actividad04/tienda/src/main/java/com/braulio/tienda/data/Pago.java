@@ -18,7 +18,8 @@ public class Pago {
     
     @Id
     @GeneratedValue
-    private int idPago;
+    @Column(name = "idPago")
+    private Integer idPago;
 
     @Column(name = "pagoPlataforma", nullable = false, length = 255)
     private String plataforma;

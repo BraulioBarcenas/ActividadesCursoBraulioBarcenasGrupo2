@@ -18,7 +18,8 @@ public class Envio {
     
     @Id
     @GeneratedValue
-    private int idEnvio;
+    @Column(name = "idEnvio")
+    private Integer idEnvio;
     
     @Column(name = "envEstado", nullable = false, length = 45)
     private String estado;
