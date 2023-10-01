@@ -14,7 +14,7 @@ import com.braulio.tienda.repository.UsuarioRepository;
 public class UsuarioService {
     
     @Autowired
-    UsuarioRepository usuarioRepository;
+    private UsuarioRepository usuarioRepository;
 
     public List<UsuarioDto> getUsuarios(){
         List<UsuarioDto> listaUsuarios = new ArrayList<>();
