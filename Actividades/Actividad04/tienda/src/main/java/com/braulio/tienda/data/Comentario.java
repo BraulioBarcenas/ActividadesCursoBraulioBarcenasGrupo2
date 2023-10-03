@@ -1,6 +1,7 @@
 package com.braulio.tienda.data;
 
-import java.sql.Date;
+
+import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,7 +24,9 @@ public class Comentario {
     @GeneratedValue
     @Column(name = "idComentario")
     private Integer idComentario;
+    @Column(name = "comComentario")
     private String comentario;
+    @Column(name = "comFecha")
     private Date fecha;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
