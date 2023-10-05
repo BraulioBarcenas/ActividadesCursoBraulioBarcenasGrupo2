@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.braulio.tienda.data.Comentario;
+import com.braulio.tienda.data.Producto;
 import com.braulio.tienda.data.dto.ComentarioDto;
 import com.braulio.tienda.repository.ComentarioRepository;
 import com.braulio.tienda.repository.ProductoRepository;
@@ -38,14 +39,17 @@ public class ComentarioService {
         return comentarioDto;
     }
 
-    public List<ComentarioDto> obtenerComentariosEnProducto(Integer idComentario){
+    public List<ComentarioDto> obtenerComentariosEnProducto(Integer idProducto){
         List<ComentarioDto> comentariosObtenidos = new ArrayList<>();
-        for (Comentario comentarioBD : comentarioRepository.findByProducto(idComentario)) {
+        Producto producto = productoRepository.getReferenceById(idProducto);
+        for (Comentario comentarioBD : comentarioRepository.findByProducto(producto)) {
             ComentarioDto comentarioDto = new ComentarioDto();
             comentarioDto.setIdComentario(comentarioBD.getIdComentario());
             comentarioDto.setComentario(comentarioBD.getComentario());
             comentarioDto.setFecha(comentarioBD.getFecha());
             comentarioDto.setProducto(comentarioBD.getProducto().getIdProducto());
+            comentarioDto.setTienda(comentarioBD.getTienda().getIdTienda());
+            comentarioDto.setUsuario(comentarioBD.getUsuario().getIdUsuario());
             comentariosObtenidos.add(comentarioDto);
         }
         return comentariosObtenidos;

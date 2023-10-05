@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -19,7 +20,7 @@ import lombok.Setter;
 public class PedidosProductos {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idPedidosProductos")
     private Integer idPedidosProductos;
 
@@ -35,6 +36,4 @@ public class PedidosProductos {
 
     @Column(name = "prod_pedPrecioDeVenta",nullable = false)
     private Integer precioVenta;
-    @Column(name = "prod_pedDescuento", nullable = false)
-    private Float descuento;
 }
