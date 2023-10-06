@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -14,11 +15,11 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "tiendas")
+@Table(name = "productos")
 public class Producto {
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idProducto")
     private Integer idProducto;
 
@@ -34,8 +35,6 @@ public class Producto {
     private String marca;
     @Column(name = "prodCategoria", nullable = true)
     private String categoria;
-    @Column(name = "prodStock", nullable = false)
-    private Integer stock;
     @Column(name = "prodColor", nullable = true)
     private String color;
     @Column(name = "prodTalla", nullable = true)

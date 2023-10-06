@@ -14,7 +14,7 @@ import com.braulio.tienda.repository.UsuarioRepository;
 public class UsuarioService {
     
     @Autowired
-    UsuarioRepository usuarioRepository;
+    private UsuarioRepository usuarioRepository;
 
     public List<UsuarioDto> getUsuarios(){
         List<UsuarioDto> listaUsuarios = new ArrayList<>();
@@ -26,11 +26,6 @@ public class UsuarioService {
             usuarioDto.setApPat(user.getApPat());
             usuarioDto.setApMat(user.getApMat());
             usuarioDto.setEmail(user.getEmail());
-            usuarioDto.setCalle(user.getCalle());
-            usuarioDto.setColonia(user.getColonia());
-            usuarioDto.setEstado(user.getEstado());
-            usuarioDto.setCiudad(user.getCiudad());
-            usuarioDto.setNumCasa(user.getNumCasa());
             listaUsuarios.add(usuarioDto);
         }
 
@@ -43,11 +38,6 @@ public class UsuarioService {
         usuario.setApPat(dto.getApPat());
         usuario.setApMat(dto.getApMat());
         usuario.setEmail(dto.getEmail());
-        usuario.setCalle(dto.getCalle());
-        usuario.setColonia(dto.getColonia());
-        usuario.setEstado(dto.getEstado());
-        usuario.setCiudad(dto.getCiudad());
-        usuario.setNumCasa(dto.getNumCasa());
         usuario.setPassword(dto.getPassword());
         usuario = usuarioRepository.save(usuario);
         dto.setIdUsuario(usuario.getIdUsuario());

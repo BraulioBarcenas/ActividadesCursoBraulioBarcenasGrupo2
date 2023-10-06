@@ -1,11 +1,13 @@
 package com.braulio.tienda.data;
 
-import java.sql.Date;
+
+import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -20,16 +22,16 @@ import lombok.Setter;
 public class Pedido {
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idPedidos")
     private Integer idPedidos;
 
     @Column(name = "pedFecha", nullable = false)
     private Date fecha;
     @Column(name = "pedTotal", nullable = false)
-    private Integer total;
+    private double total;
     @Column(name = "pedIVA", nullable = false)
-    private Integer iva;
+    private double iva;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuarios_idUsuario",nullable = false)

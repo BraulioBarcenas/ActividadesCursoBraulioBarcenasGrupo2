@@ -14,11 +14,6 @@ public class UsuarioDto implements Serializable{
     String apPat;
     String apMat;
     String email;
-    String calle;
-    String colonia;
-    String estado;
-    String ciudad;
-    Integer numCasa;
     String password;
 
     public UsuarioDto(){

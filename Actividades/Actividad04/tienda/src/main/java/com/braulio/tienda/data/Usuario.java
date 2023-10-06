@@ -1,5 +1,6 @@
 package com.braulio.tienda.data;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,20 +32,7 @@ public class Usuario {
     @Column(name = "usuEmail", length = 45,nullable = false )
     private String email;
     
-    @Column(name = "usuCalle", length = 45,nullable = false )
-    private String calle;
     
-    @Column(name = "usuColonia", length = 45,nullable = false )
-    private String colonia;
-    
-    @Column(name = "usuEstado", length = 45,nullable = false )
-    private String estado;
-    
-    @Column(name = "usuCiudad", length = 60,nullable = false )
-    private String ciudad;
-    
-    @Column(name = "usuNumCasa", nullable = false)
-    private Integer numCasa;
     
     @Column(name = "usuPassword", length = 255,nullable = false )
     private String password;
