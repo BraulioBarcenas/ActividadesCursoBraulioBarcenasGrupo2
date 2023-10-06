@@ -20,8 +20,8 @@ public class Pago {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idPago")
-    private Integer idPago;
+    @Column(name = "idPagos")
+    private Integer idPagos;
 
     @Column(name = "pagoPlataforma", nullable = false, length = 255)
     private String plataforma;

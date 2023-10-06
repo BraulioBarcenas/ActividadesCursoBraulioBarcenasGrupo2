@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,12 +23,12 @@ public class DetalleCarrito {
     @Column(name = "idDetalleCarrito")
     private Integer idDetalleCarrito;
 
-    @MapsId("idCarrito")
+    // @MapsId("idCarrito")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "carrito_idCarrito", nullable = false)
     private Carrito carrito;
     
-    @MapsId("idProducto")
+    // @MapsId("idProducto")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "productos_idProducto", nullable = false)
     private Producto producto;

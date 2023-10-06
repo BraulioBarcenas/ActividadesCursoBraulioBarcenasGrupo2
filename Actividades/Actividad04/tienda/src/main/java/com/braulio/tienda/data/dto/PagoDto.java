@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PagoDto implements Serializable{
-    private Integer idPago;
+    private Integer idPagos;
     private String plataforma;
     private Date fecha;
     private double cargo;

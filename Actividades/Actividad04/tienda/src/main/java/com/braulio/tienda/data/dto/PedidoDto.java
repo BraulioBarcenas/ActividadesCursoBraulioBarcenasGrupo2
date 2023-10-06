@@ -15,11 +15,11 @@ public class PedidoDto implements Serializable{
     private double total;
     private double iva;
     private int usuario;
-    private int pago;
-    private int envio;
+    // private int pago;
+    // private int envio;
     private String plataforma;
     private String numCuenta;
-    private Integer idEnvio;
+    // private Integer idEnvio;
     private String calle;
     private String colonia;
     private String estado;

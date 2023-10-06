@@ -1,5 +1,6 @@
 package com.braulio.tienda.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class PedidoService {
     @Autowired
     private PedidosProductosRepository pedidosProductosRepository;
 
-    public Pago crearPago(PagoDto pagoDto){
+    public Integer crearPago(PagoDto pagoDto){
         Pago pago = new Pago();
 
         pago.setCargo(pagoDto.getCargo());
@@ -51,10 +52,10 @@ public class PedidoService {
         pago.setPlataforma(pagoDto.getPlataforma());
         pagoRepository.save(pago);
         
-        return pago;
+        return pago.getIdPagos();
     }
 
-    public Envio crearEnvio(EnvioDto envioDto){
+    public Integer crearEnvio(EnvioDto envioDto){
         Envio envio = new Envio();
         envio.setCalle(envioDto.getCalle());
         envio.setCiudad(envioDto.getCiudad());
@@ -62,7 +63,7 @@ public class PedidoService {
         envio.setEstado(envioDto.getEstado());
         envio.setNumCasa(envioDto.getNumCasa());
         envioRepository.save(envio);
-        return envio;
+        return envio.getIdEnvio();
     }
 
 
@@ -77,13 +78,19 @@ public class PedidoService {
             Integer total = 0;
             Carrito carrito = carritoRepository.findByUsuario(usuario).get(0);
             List<DetalleCarrito> productos = detalleCarritoRepository.findByCarritoAndActive(carrito,true);
+
             for (DetalleCarrito itemCarrito : productos) {
                 total += itemCarrito.getProducto().getPrecio();
             }
+
             newPedido.setIva(total*IVA);
             newPedido.setTotal(total+newPedido.getIva());
-            newPedido.setPago(crearPago(new PagoDto(pedidoDto.getPlataforma(), newPedido.getFecha(),newPedido.getTotal(), pedidoDto.getNumCuenta())));
-            newPedido.setEnvio(crearEnvio(new EnvioDto(pedidoDto.getCalle(), pedidoDto.getColonia(), pedidoDto.getEstado(), pedidoDto.getCiudad(), pedidoDto.getNumCasa())));
+            Integer idPago = crearPago(new PagoDto(pedidoDto.getPlataforma(), newPedido.getFecha(),newPedido.getTotal(), pedidoDto.getNumCuenta()));
+            Pago pago = pagoRepository.getReferenceById(idPago);
+            newPedido.setPago(pago);
+            Integer idEnvio = crearEnvio(new EnvioDto(pedidoDto.getCalle(), pedidoDto.getColonia(), pedidoDto.getEstado(), pedidoDto.getCiudad(), pedidoDto.getNumCasa()));
+            Envio envio = envioRepository.getReferenceById(idEnvio);
+            newPedido.setEnvio(envio);
             pedidoRepository.save(newPedido);
             
             for (DetalleCarrito itemCarrito : productos) {
@@ -95,9 +102,37 @@ public class PedidoService {
                 
             }
 
+            
+            pedidoDto.setTotal(newPedido.getTotal());
+            pedidoDto.setIva(newPedido.getIva());
+            pedidoDto.setFecha(newPedido.getFecha());
+            pedidoDto.setIdPedidos(newPedido.getIdPedidos());
         }
-    
-
         return pedidoDto;
+    }
+
+
+
+    public List<PedidoDto> obtenerPedidosPorUsuario(Integer idUsuario){
+        Usuario usuario = usuarioRepository.getReferenceById(idUsuario);
+        List<Pedido> pedidos = pedidoRepository.findByUsuario(usuario);
+        List<PedidoDto> pedidoDtos = new ArrayList<>();
+        for (Pedido pedido : pedidos) {
+            PedidoDto pedidoDto = new PedidoDto();
+            pedidoDto.setUsuario(pedido.getUsuario().getIdUsuario());
+            pedidoDto.setIdPedidos(pedido.getIdPedidos());
+            pedidoDto.setNumCuenta(pedido.getPago().getNumCuenta());
+            pedidoDto.setPlataforma(pedido.getPago().getPlataforma());
+            pedidoDto.setCalle(pedido.getEnvio().getCalle());
+            pedidoDto.setCiudad(pedido.getEnvio().getCiudad());
+            pedidoDto.setColonia(pedido.getEnvio().getColonia());
+            pedidoDto.setEstado(pedido.getEnvio().getEstado());
+            pedidoDto.setNumCasa(pedido.getEnvio().getNumCasa());
+            pedidoDto.setFecha(pedido.getFecha());
+            pedidoDto.setIva(pedido.getIva());
+            pedidoDto.setTotal(pedido.getTotal());
+            pedidoDtos.add(pedidoDto);
+        }
+        return pedidoDtos;
     }
 }
