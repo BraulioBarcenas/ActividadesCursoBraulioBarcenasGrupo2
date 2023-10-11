@@ -25,6 +25,8 @@ import com.braulio.tienda.repository.PedidoRepository;
 import com.braulio.tienda.repository.PedidosProductosRepository;
 import com.braulio.tienda.repository.UsuarioRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class PedidoService {
     @Autowired
@@ -69,15 +71,23 @@ public class PedidoService {
 
     public PedidoDto nuevoPedido(PedidoDto pedidoDto){
         double IVA = 0.16;
-        Usuario usuario = usuarioRepository.getReferenceById(pedidoDto.getUsuario());
+        Usuario usuario = usuarioRepository.findById(pedidoDto.getUsuario())
+            .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));
 
         if (usuario instanceof Usuario) {
             Pedido newPedido = new Pedido();
             newPedido.setFecha(new Date());
             newPedido.setUsuario(usuario);
             Integer total = 0;
-            Carrito carrito = carritoRepository.findByUsuario(usuario).get(0);
-            List<DetalleCarrito> productos = detalleCarritoRepository.findByCarritoAndActive(carrito,true);
+            List<Carrito> carrito = carritoRepository.findByUsuario(usuario);
+            if (carrito.isEmpty()) {
+                throw new EntityNotFoundException("El usuario no tiene articulos en su carrito.");
+            }
+
+            List<DetalleCarrito> productos = detalleCarritoRepository.findByCarritoAndActive(carrito.get(0),true);
+            if (productos.isEmpty()) {
+                throw new EntityNotFoundException("El usuario no tiene articulos en su carrito.");
+            }
 
             for (DetalleCarrito itemCarrito : productos) {
                 total += itemCarrito.getProducto().getPrecio();
@@ -99,7 +109,8 @@ public class PedidoService {
                 newPedidosProductos.setProducto(itemCarrito.getProducto());
                 newPedidosProductos.setPrecioVenta(itemCarrito.getProducto().getPrecio());
                 pedidosProductosRepository.save(newPedidosProductos);
-                
+                itemCarrito.setActive(false);
+                detalleCarritoRepository.save(itemCarrito);
             }
 
             
@@ -114,8 +125,12 @@ public class PedidoService {
 
 
     public List<PedidoDto> obtenerPedidosPorUsuario(Integer idUsuario){
-        Usuario usuario = usuarioRepository.getReferenceById(idUsuario);
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));
         List<Pedido> pedidos = pedidoRepository.findByUsuario(usuario);
+        if (pedidos.isEmpty()) {
+            throw new EntityNotFoundException("El usuario no tiene un historial de pedidos.");
+        }
         List<PedidoDto> pedidoDtos = new ArrayList<>();
         for (Pedido pedido : pedidos) {
             PedidoDto pedidoDto = new PedidoDto();

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.braulio.tienda.data.dto.PedidoDto;
 import com.braulio.tienda.service.PedidoService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/pedidos")
 public class PedidoController {
@@ -20,7 +22,7 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @PostMapping("/nuevoPedido")
-    public PedidoDto nuevoPedido(@RequestBody PedidoDto dto){
+    public PedidoDto nuevoPedido(@Valid @RequestBody PedidoDto dto){
         return pedidoService.nuevoPedido(dto);
     }
 

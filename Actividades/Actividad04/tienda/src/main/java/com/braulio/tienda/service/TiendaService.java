@@ -9,6 +9,8 @@ import com.braulio.tienda.data.dto.TiendaDto;
 import com.braulio.tienda.repository.TiendaRepository;
 import com.braulio.tienda.repository.UsuarioRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class TiendaService {
     
@@ -30,7 +32,8 @@ public class TiendaService {
     }
 
     private Usuario buscarUsuarioPorId(int idUsuario){
-        Usuario usuarioFound = usuarioRepository.getReferenceById(idUsuario);
-        return usuarioFound;
+         Usuario usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow(()-> new EntityNotFoundException("La tienda no existe."));
+        return usuario;
     }
 }

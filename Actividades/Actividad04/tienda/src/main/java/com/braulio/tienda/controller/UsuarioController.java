@@ -14,6 +14,8 @@ import com.braulio.tienda.data.dto.UsuarioDto;
 import com.braulio.tienda.service.TiendaService;
 import com.braulio.tienda.service.UsuarioService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
@@ -29,12 +31,12 @@ public class UsuarioController {
     }
 
     @PostMapping("/guardarUsuarios")
-    public UsuarioDto saveUser(@RequestBody UsuarioDto dto){
+    public UsuarioDto saveUser(@Valid @RequestBody UsuarioDto dto){
         return usuarioService.guardarUsuario(dto);
     }
 
    @PostMapping("/crearTienda")
-   public TiendaDto newStore(@RequestBody TiendaDto dto){
+   public TiendaDto newStore(@Valid @RequestBody TiendaDto dto){
         return tiendaService.crearTienda(dto);
    }
     

@@ -13,6 +13,8 @@ import com.braulio.tienda.data.dto.CarritoDto;
 import com.braulio.tienda.data.dto.ProductoDto;
 import com.braulio.tienda.service.CarritoService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/carrito")
 public class CarritoController {
@@ -20,7 +22,7 @@ public class CarritoController {
     private CarritoService carritoService;
 
     @PostMapping("/addCarrito")
-    public List<ProductoDto> addToCart(@RequestBody CarritoDto carritoDto){
+    public List<ProductoDto> addToCart(@Valid @RequestBody CarritoDto carritoDto){
         return carritoService.agregarProductoACarrito(carritoDto);
     }
 

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.braulio.tienda.data.dto.ProductoDto;
 import com.braulio.tienda.service.ProductoService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/productos")
 public class ProductoController {
@@ -17,7 +19,7 @@ public class ProductoController {
     private ProductoService productoService;
 
     @PostMapping("/guardarProducto")
-    public ProductoDto saveProduct(@RequestBody ProductoDto dto){
+    public ProductoDto saveProduct(@Valid @RequestBody ProductoDto dto){
         return productoService.nuevoProducto(dto);
     }
 }

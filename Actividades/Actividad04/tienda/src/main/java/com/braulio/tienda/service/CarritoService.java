@@ -17,6 +17,8 @@ import com.braulio.tienda.repository.DetalleCarritoRepository;
 import com.braulio.tienda.repository.ProductoRepository;
 import com.braulio.tienda.repository.UsuarioRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class CarritoService {
     
@@ -31,7 +33,12 @@ public class CarritoService {
 
     public List<ProductoDto> obtenerCarrito(Integer idUsuario){
 
-        Usuario usuario = usuarioRepository.getReferenceById(idUsuario);
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));
+        List<Carrito> carritoFound = carritoRepository.findByUsuario(usuario);
+        if (carritoFound.size() < 1 ) {
+            throw new EntityNotFoundException("Carrito no disponible");
+        }
         Carrito carrito = (carritoRepository.findByUsuario(usuario)).get(0);
 
         List<DetalleCarrito> productos = detalleCarritoRepository.findByCarritoAndActive(carrito,true);
@@ -56,8 +63,12 @@ public class CarritoService {
     }
 
     public List<ProductoDto> agregarProductoACarrito(CarritoDto carritoDto){
-        Usuario usuario = usuarioRepository.getReferenceById(carritoDto.getUsuario());
+        Usuario usuario = usuarioRepository.findById(carritoDto.getUsuario())
+            .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));;
         List<Carrito> userCarrito = carritoRepository.findByUsuario(usuario);
+        if (userCarrito.isEmpty()) {
+            throw new EntityNotFoundException("El usuario no existe.");
+        }
         if (userCarrito.size() > 0) {
 
             DetalleCarrito newDetalleCarrito = new DetalleCarrito();

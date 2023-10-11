@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.braulio.tienda.data.Carrito;
 import com.braulio.tienda.data.Producto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,6 @@ import lombok.Setter;
 @Setter
 public class DetalleCarritoDto implements Serializable{
     private Carrito carrito;
-    @JsonIgnore 
     private List<Producto> productos;
     
     public DetalleCarritoDto(){
