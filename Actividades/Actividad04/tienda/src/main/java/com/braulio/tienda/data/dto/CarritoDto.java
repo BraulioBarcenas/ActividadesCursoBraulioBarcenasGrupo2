@@ -20,4 +20,8 @@ public class CarritoDto implements Serializable{
     @NotNull(message = "Debes ingresar un producto.")
     @Positive(message = "Debe ingresar un producto valido.")
     private Integer producto;
+    @NotNull(message = "Debes de ingresar la cantidad de productos")
+    @Positive(message = "Debe ingresar un stock de 1 o mayor.")
+    private Integer stock;
+
 }

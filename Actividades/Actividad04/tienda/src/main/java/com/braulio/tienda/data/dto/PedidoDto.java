@@ -32,6 +32,6 @@ public class PedidoDto implements Serializable{
     private String estado;
     @NotBlank(message = "Ingresa una ciudad")
     private String ciudad;
-    @NotBlank(message = "Ingresa un numCasa")
+    @NotNull(message = "Ingresa un numCasa")
     private Integer numCasa;
 }

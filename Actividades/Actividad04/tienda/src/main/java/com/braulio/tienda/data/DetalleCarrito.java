@@ -36,4 +36,7 @@ public class DetalleCarrito {
     @Column(name = "active")
     private boolean active;
 
+    @Column(name = "stock")
+    private Integer stock;
+
 }

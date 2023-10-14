@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.braulio.tienda.data.Producto;
 import com.braulio.tienda.data.Tienda;
 import com.braulio.tienda.data.dto.ProductoDto;
+import com.braulio.tienda.data.dto.ProductoDtoAddStock;
 import com.braulio.tienda.repository.ProductoRepository;
 import com.braulio.tienda.repository.TiendaRepository;
 
@@ -27,6 +28,7 @@ public class ProductoService {
         newProducto.setNombre(productoDto.getNombre());
         newProducto.setDescripcion(productoDto.getDescripcion());
         newProducto.setPrecio(productoDto.getPrecio());
+        newProducto.setStock(productoDto.getStock());
         newProducto.setFechaCaducidad(productoDto.getFechaCaducidad());
         newProducto.setMarca(productoDto.getMarca());
         newProducto.setCategoria(productoDto.getCategoria());
@@ -37,6 +39,33 @@ public class ProductoService {
         productoRepository.save(newProducto);
         productoDto.setIdProducto(newProducto.getIdProducto());
         return productoDto;
+    }
+
+    public ProductoDto agregarStock(ProductoDtoAddStock productoDto){
+
+        Producto producto = productoRepository.findById(productoDto.getIdProducto())
+        .orElseThrow(()-> new EntityNotFoundException("El producto no existe."));
+        ProductoDto returnProductoDto = new ProductoDto();
+
+        producto.setStock(producto.getStock() + productoDto.getStock());
+        productoRepository.save(producto);
+
+        returnProductoDto.setTalla(producto.getTalla());
+        returnProductoDto.setTienda(producto.getTienda().getIdTienda());
+        returnProductoDto.setCategoria(producto.getCategoria());
+        returnProductoDto.setColor(producto.getColor());
+        returnProductoDto.setDescripcion(producto.getDescripcion());
+        returnProductoDto.setFechaCaducidad(producto.getFechaCaducidad());
+        returnProductoDto.setIdProducto(producto.getIdProducto());
+        returnProductoDto.setImg(producto.getImg());
+        returnProductoDto.setMarca(producto.getMarca());
+        returnProductoDto.setNombre(producto.getNombre());
+        returnProductoDto.setPrecio(producto.getPrecio());
+        returnProductoDto.setStock(producto.getStock());
+
+        return returnProductoDto;
+
+        
     }
 
     private Tienda buscarTiendaPorId(int idTienda){

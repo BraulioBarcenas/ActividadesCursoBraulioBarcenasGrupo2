@@ -29,6 +29,8 @@ public class Producto {
     private String descripcion;
     @Column(name = "prodPrecio", nullable = false)
     private Integer precio;
+    @Column(name = "prodStock", nullable = false)
+    private Integer stock;
     @Column(name = "prodFechaCaducidad", nullable = true)
     private String fechaCaducidad;
     @Column(name = "prodMarca", nullable = true)

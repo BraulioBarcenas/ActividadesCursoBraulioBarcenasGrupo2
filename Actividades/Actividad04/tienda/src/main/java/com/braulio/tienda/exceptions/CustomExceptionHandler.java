@@ -29,4 +29,13 @@ public class CustomExceptionHandler {
     public ErrorResponse handleEntityNotFoundException(EntityNotFoundException ex) {
         return new ErrorResponse(ex.getMessage());
     }
+
+    @ExceptionHandler(OutOfStockException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorResponse handleEntityNotFoundException(OutOfStockException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
+
 }

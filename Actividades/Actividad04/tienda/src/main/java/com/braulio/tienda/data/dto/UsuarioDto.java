@@ -4,24 +4,22 @@ import java.io.Serializable;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class UsuarioDto implements Serializable{
-    Integer idUsuario;
+    private Integer idUsuario;
     @NotBlank(message = "Ingresa un nombre")
-    String nombre;
+    private String nombre;
     @NotBlank(message = "Ingresa un apellido paterno")
-    String apPat;
-    String apMat;
-    @Email
+    private String apPat;
+    private String apMat;
+    @Email(message = "Ingresa un email valido")
     @NotBlank(message = "Ingresa un email")
-    String email;
-    @NotNull(message = "Ingresa una contrasena")
-    String password;
+    private String email;
+
 
     public UsuarioDto(){
         
