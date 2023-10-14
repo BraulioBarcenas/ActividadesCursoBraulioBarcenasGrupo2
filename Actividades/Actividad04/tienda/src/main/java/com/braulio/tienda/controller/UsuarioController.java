@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.braulio.tienda.data.dto.TiendaDto;
 import com.braulio.tienda.data.dto.UsuarioDto;
+import com.braulio.tienda.data.dto.UsuarioDtoPass;
 import com.braulio.tienda.service.TiendaService;
 import com.braulio.tienda.service.UsuarioService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -29,12 +32,12 @@ public class UsuarioController {
     }
 
     @PostMapping("/guardarUsuarios")
-    public UsuarioDto saveUser(@RequestBody UsuarioDto dto){
+    public UsuarioDtoPass saveUser(@Valid @RequestBody UsuarioDtoPass dto){
         return usuarioService.guardarUsuario(dto);
     }
 
    @PostMapping("/crearTienda")
-   public TiendaDto newStore(@RequestBody TiendaDto dto){
+   public TiendaDto newStore(@Valid @RequestBody TiendaDto dto){
         return tiendaService.crearTienda(dto);
    }
     

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.braulio.tienda.data.dto.ComentarioDto;
 import com.braulio.tienda.service.ComentarioService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/comentarios")
 public class ComentarioController {
@@ -20,7 +22,7 @@ public class ComentarioController {
     private ComentarioService comentarioService;
 
     @PostMapping("/nuevoComentario")
-    public ComentarioDto newComment(@RequestBody ComentarioDto dto){
+    public ComentarioDto newComment(@Valid @RequestBody ComentarioDto dto){
         return comentarioService.crearComentario(dto);
     }
 

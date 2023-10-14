@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.braulio.tienda.data.Usuario;
 import com.braulio.tienda.data.dto.UsuarioDto;
+import com.braulio.tienda.data.dto.UsuarioDtoPass;
 import com.braulio.tienda.repository.UsuarioRepository;
 
 @Service
@@ -32,7 +33,7 @@ public class UsuarioService {
         return listaUsuarios;
     }
 
-    public UsuarioDto guardarUsuario(UsuarioDto dto){
+    public UsuarioDtoPass guardarUsuario(UsuarioDtoPass dto){
         Usuario usuario = new Usuario();
         usuario.setNombre(dto.getNombre());
         usuario.setApPat(dto.getApPat());
