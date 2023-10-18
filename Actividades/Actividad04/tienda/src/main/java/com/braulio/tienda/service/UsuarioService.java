@@ -7,9 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.braulio.tienda.data.Usuario;
+import com.braulio.tienda.data.dto.RespuestaGenerica;
 import com.braulio.tienda.data.dto.UsuarioDto;
 import com.braulio.tienda.data.dto.UsuarioDtoPass;
+import com.braulio.tienda.exceptions.NullParamsException;
 import com.braulio.tienda.repository.UsuarioRepository;
+import com.braulio.tienda.utils.Constantes;
 
 @Service
 public class UsuarioService {
@@ -17,8 +20,9 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public List<UsuarioDto> getUsuarios(){
+    public RespuestaGenerica getUsuarios(){
         List<UsuarioDto> listaUsuarios = new ArrayList<>();
+        RespuestaGenerica respuesta = new RespuestaGenerica();
 
         for (Usuario user : usuarioRepository.findAll()) {
             UsuarioDto usuarioDto = new UsuarioDto();
@@ -30,11 +34,21 @@ public class UsuarioService {
             listaUsuarios.add(usuarioDto);
         }
 
-        return listaUsuarios;
+        respuesta.setExito(true);
+        respuesta.getDatos().add(listaUsuarios);
+        respuesta.setMensaje(Constantes.EXITO_USUARIOS_CONSULTADOS);
+        return respuesta;
     }
 
-    public UsuarioDtoPass guardarUsuario(UsuarioDtoPass dto){
+    public RespuestaGenerica guardarUsuario(UsuarioDtoPass dto){
+        RespuestaGenerica respuesta = new RespuestaGenerica();
         Usuario usuario = new Usuario();
+
+        List<Usuario> dupedUsuario = usuarioRepository.findByEmail(dto.getEmail());
+        if (!(dupedUsuario == null || dupedUsuario.isEmpty())) {
+            throw new NullParamsException(Constantes.EMAIL_DUPLICADO);
+        }
+
         usuario.setNombre(dto.getNombre());
         usuario.setApPat(dto.getApPat());
         usuario.setApMat(dto.getApMat());
@@ -42,6 +56,11 @@ public class UsuarioService {
         usuario.setPassword(dto.getPassword());
         usuario = usuarioRepository.save(usuario);
         dto.setIdUsuario(usuario.getIdUsuario());
-        return dto;
+
+        respuesta.setExito(true);
+        respuesta.setMensaje(Constantes.EXITO_NUEVO_USUARIO);
+        respuesta.getDatos().add(dto);
+
+        return respuesta;
     }
 }

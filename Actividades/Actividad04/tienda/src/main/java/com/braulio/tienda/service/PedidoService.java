@@ -18,6 +18,7 @@ import com.braulio.tienda.data.Usuario;
 import com.braulio.tienda.data.dto.EnvioDto;
 import com.braulio.tienda.data.dto.PagoDto;
 import com.braulio.tienda.data.dto.PedidoDto;
+import com.braulio.tienda.data.dto.RespuestaGenerica;
 import com.braulio.tienda.repository.CarritoRepository;
 import com.braulio.tienda.repository.DetalleCarritoRepository;
 import com.braulio.tienda.repository.EnvioRepository;
@@ -26,6 +27,7 @@ import com.braulio.tienda.repository.PedidoRepository;
 import com.braulio.tienda.repository.PedidosProductosRepository;
 import com.braulio.tienda.repository.ProductoRepository;
 import com.braulio.tienda.repository.UsuarioRepository;
+import com.braulio.tienda.utils.Constantes;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -73,71 +75,77 @@ public class PedidoService {
     }
 
 
-    public PedidoDto nuevoPedido(PedidoDto pedidoDto){
+    public RespuestaGenerica nuevoPedido(PedidoDto pedidoDto){
         double IVA = 0.16;
         Usuario usuario = usuarioRepository.findById(pedidoDto.getUsuario())
             .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));
 
-        if (usuario instanceof Usuario) {
-            Pedido newPedido = new Pedido();
-            newPedido.setFecha(new Date());
-            newPedido.setUsuario(usuario);
-            Integer total = 0;
-            List<Carrito> carrito = carritoRepository.findByUsuario(usuario);
-            if (carrito == null || carrito.isEmpty()) {
-                throw new EntityNotFoundException("El usuario no tiene articulos en su carrito.");
-            }
-
-            List<DetalleCarrito> productos = detalleCarritoRepository.findByCarritoAndActive(carrito.get(0),true);
-            if (productos == null || productos.isEmpty()) {
-                throw new EntityNotFoundException("El usuario no tiene articulos en su carrito.");
-            }
-
-            for (DetalleCarrito itemCarrito : productos) {
-                Producto producto = productoRepository.findById(itemCarrito.getProducto().getIdProducto())
-                .orElseThrow(()-> new EntityNotFoundException("El producto no existe."));
-                producto.setStock(producto.getStock()- itemCarrito.getStock());
-                total += itemCarrito.getProducto().getPrecio()*itemCarrito.getStock();
-            }
-
-            newPedido.setIva(total*IVA);
-            newPedido.setTotal(total+newPedido.getIva());
-            Integer idPago = crearPago(new PagoDto(pedidoDto.getPlataforma(), newPedido.getFecha(),newPedido.getTotal(), pedidoDto.getNumCuenta()));
-            Pago pago = pagoRepository.getReferenceById(idPago);
-            newPedido.setPago(pago);
-            Integer idEnvio = crearEnvio(new EnvioDto(pedidoDto.getCalle(), pedidoDto.getColonia(), pedidoDto.getEstado(), pedidoDto.getCiudad(), pedidoDto.getNumCasa()));
-            Envio envio = envioRepository.getReferenceById(idEnvio);
-            newPedido.setEnvio(envio);
-            pedidoRepository.save(newPedido);
-            
-            for (DetalleCarrito itemCarrito : productos) {
-                PedidosProductos newPedidosProductos = new PedidosProductos();
-                newPedidosProductos.setPedido(newPedido);
-                newPedidosProductos.setProducto(itemCarrito.getProducto());
-                newPedidosProductos.setPrecioVenta(itemCarrito.getProducto().getPrecio());
-                pedidosProductosRepository.save(newPedidosProductos);
-                itemCarrito.setActive(false);
-                detalleCarritoRepository.save(itemCarrito);
-            }
-
-            
-            pedidoDto.setTotal(newPedido.getTotal());
-            pedidoDto.setIva(newPedido.getIva());
-            pedidoDto.setFecha(newPedido.getFecha());
-            pedidoDto.setIdPedidos(newPedido.getIdPedidos());
+        RespuestaGenerica respuesta = new RespuestaGenerica();
+        
+        Pedido newPedido = new Pedido();
+        newPedido.setFecha(new Date());
+        newPedido.setUsuario(usuario);
+        Integer total = 0;
+        List<Carrito> carrito = carritoRepository.findByUsuario(usuario);
+        if (carrito == null || carrito.isEmpty()) {
+            throw new EntityNotFoundException("El usuario no tiene articulos en su carrito.");
         }
-        return pedidoDto;
+
+        List<DetalleCarrito> productos = detalleCarritoRepository.findByCarritoAndActive(carrito.get(0),true);
+        if (productos == null || productos.isEmpty()) {
+            throw new EntityNotFoundException("El usuario no tiene articulos en su carrito.");
+        }
+
+        for (DetalleCarrito itemCarrito : productos) {
+            Producto producto = productoRepository.findById(itemCarrito.getProducto().getIdProducto())
+            .orElseThrow(()-> new EntityNotFoundException("El producto no existe."));
+            producto.setStock(producto.getStock()- itemCarrito.getStock());
+            total += itemCarrito.getProducto().getPrecio()*itemCarrito.getStock();
+        }
+
+        newPedido.setIva(total*IVA);
+        newPedido.setTotal(total+newPedido.getIva());
+        Integer idPago = crearPago(new PagoDto(pedidoDto.getPlataforma(), newPedido.getFecha(),newPedido.getTotal(), pedidoDto.getNumCuenta()));
+        Pago pago = pagoRepository.getReferenceById(idPago);
+        newPedido.setPago(pago);
+        Integer idEnvio = crearEnvio(new EnvioDto(pedidoDto.getCalle(), pedidoDto.getColonia(), pedidoDto.getEstado(), pedidoDto.getCiudad(), pedidoDto.getNumCasa()));
+        Envio envio = envioRepository.getReferenceById(idEnvio);
+        newPedido.setEnvio(envio);
+        pedidoRepository.save(newPedido);
+        
+        for (DetalleCarrito itemCarrito : productos) {
+            PedidosProductos newPedidosProductos = new PedidosProductos();
+            newPedidosProductos.setPedido(newPedido);
+            newPedidosProductos.setProducto(itemCarrito.getProducto());
+            newPedidosProductos.setPrecioVenta(itemCarrito.getProducto().getPrecio());
+            pedidosProductosRepository.save(newPedidosProductos);
+            itemCarrito.setActive(false);
+            detalleCarritoRepository.save(itemCarrito);
+        }
+
+        
+        pedidoDto.setTotal(newPedido.getTotal());
+        pedidoDto.setIva(newPedido.getIva());
+        pedidoDto.setFecha(newPedido.getFecha());
+        pedidoDto.setIdPedidos(newPedido.getIdPedidos());
+
+        respuesta.setExito(true);
+        respuesta.getDatos().add(pedidoDto);
+        respuesta.setMensaje(Constantes.EXITO_NUEVO_PEDIDO);
+        return respuesta;
     }
 
 
 
-    public List<PedidoDto> obtenerPedidosPorUsuario(Integer idUsuario){
+    public RespuestaGenerica obtenerPedidosPorUsuario(Integer idUsuario){
         Usuario usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));
         List<Pedido> pedidos = pedidoRepository.findByUsuario(usuario);
         if (pedidos == null || pedidos.isEmpty()) {
             throw new EntityNotFoundException("El usuario no tiene un historial de pedidos.");
         }
+
+        RespuestaGenerica respuesta = new RespuestaGenerica();
         List<PedidoDto> pedidoDtos = new ArrayList<>();
         for (Pedido pedido : pedidos) {
             PedidoDto pedidoDto = new PedidoDto();
@@ -155,6 +163,10 @@ public class PedidoService {
             pedidoDto.setTotal(pedido.getTotal());
             pedidoDtos.add(pedidoDto);
         }
-        return pedidoDtos;
+
+        respuesta.setExito(true);
+        respuesta.getDatos().add(pedidoDtos);
+        respuesta.setMensaje(Constantes.EXITO_PEDIDOS_CONSULTADOS);
+        return respuesta;
     }
 }
