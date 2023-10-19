@@ -7,8 +7,10 @@ import com.braulio.tienda.data.Producto;
 import com.braulio.tienda.data.Tienda;
 import com.braulio.tienda.data.dto.ProductoDto;
 import com.braulio.tienda.data.dto.ProductoDtoAddStock;
+import com.braulio.tienda.data.dto.RespuestaGenerica;
 import com.braulio.tienda.repository.ProductoRepository;
 import com.braulio.tienda.repository.TiendaRepository;
+import com.braulio.tienda.utils.Constantes;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -21,9 +23,10 @@ public class ProductoService {
     @Autowired
     private TiendaRepository tiendaRepository;
     
-    public ProductoDto nuevoProducto(ProductoDto productoDto){
+    public RespuestaGenerica nuevoProducto(ProductoDto productoDto){
         
         Producto newProducto = new Producto();
+        RespuestaGenerica respuesta = new RespuestaGenerica();
 
         newProducto.setNombre(productoDto.getNombre());
         newProducto.setDescripcion(productoDto.getDescripcion());
@@ -38,14 +41,19 @@ public class ProductoService {
         newProducto.setTienda(buscarTiendaPorId(productoDto.getTienda()));
         productoRepository.save(newProducto);
         productoDto.setIdProducto(newProducto.getIdProducto());
-        return productoDto;
+
+        respuesta.setExito(true);
+        respuesta.getDatos().add(productoDto);
+        respuesta.setMensaje(Constantes.EXITO_NUEVO_PRODUCTO);
+        return respuesta;
     }
 
-    public ProductoDto agregarStock(ProductoDtoAddStock productoDto){
+    public RespuestaGenerica agregarStock(ProductoDtoAddStock productoDto){
 
         Producto producto = productoRepository.findById(productoDto.getIdProducto())
         .orElseThrow(()-> new EntityNotFoundException("El producto no existe."));
         ProductoDto returnProductoDto = new ProductoDto();
+        RespuestaGenerica respuesta = new RespuestaGenerica();
 
         producto.setStock(producto.getStock() + productoDto.getStock());
         productoRepository.save(producto);
@@ -63,7 +71,10 @@ public class ProductoService {
         returnProductoDto.setPrecio(producto.getPrecio());
         returnProductoDto.setStock(producto.getStock());
 
-        return returnProductoDto;
+        respuesta.setExito(true);
+        respuesta.getDatos().add(returnProductoDto);
+        respuesta.setMensaje(Constantes.EXITO_STOCK_ANADIDO);
+        return respuesta;
 
         
     }

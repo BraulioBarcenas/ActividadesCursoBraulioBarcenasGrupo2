@@ -12,10 +12,12 @@ import com.braulio.tienda.data.Producto;
 import com.braulio.tienda.data.Tienda;
 import com.braulio.tienda.data.Usuario;
 import com.braulio.tienda.data.dto.ComentarioDto;
+import com.braulio.tienda.data.dto.RespuestaGenerica;
 import com.braulio.tienda.repository.ComentarioRepository;
 import com.braulio.tienda.repository.ProductoRepository;
 import com.braulio.tienda.repository.TiendaRepository;
 import com.braulio.tienda.repository.UsuarioRepository;
+import com.braulio.tienda.utils.Constantes;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -31,7 +33,7 @@ public class ComentarioService {
     @Autowired
     private TiendaRepository tiendaRepository;
 
-    public ComentarioDto crearComentario(ComentarioDto comentarioDto){
+    public RespuestaGenerica crearComentario(ComentarioDto comentarioDto){
 
         Usuario usuario = usuarioRepository.findById(comentarioDto.getUsuario())
             .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));
@@ -39,6 +41,8 @@ public class ComentarioService {
             .orElseThrow(()-> new EntityNotFoundException("El producto no existe."));
         Tienda tienda = tiendaRepository.findById(comentarioDto.getTienda())
             .orElseThrow(()-> new EntityNotFoundException("La tienda no existe."));
+
+        RespuestaGenerica respuesta = new RespuestaGenerica();
 
         Comentario newComentario = new Comentario();
         newComentario.setComentario(comentarioDto.getComentario());
@@ -49,13 +53,20 @@ public class ComentarioService {
         comentarioRepository.save(newComentario);
         comentarioDto.setIdComentario(newComentario.getIdComentario());
         comentarioDto.setFecha(newComentario.getFecha());
-        return comentarioDto;
+
+        respuesta.setExito(true);
+        respuesta.getDatos().add(comentarioDto);
+        respuesta.setMensaje(Constantes.EXITO_NUEVO_COMENTARIO);
+        return respuesta;
     }
 
-    public List<ComentarioDto> obtenerComentariosEnProducto(Integer idProducto){
+    public RespuestaGenerica obtenerComentariosEnProducto(Integer idProducto){
         List<ComentarioDto> comentariosObtenidos = new ArrayList<>();
+
         Producto producto = productoRepository.findById(idProducto)
             .orElseThrow(()-> new EntityNotFoundException("El producto no existe."));
+
+        RespuestaGenerica respuesta = new RespuestaGenerica();
         for (Comentario comentarioBD : comentarioRepository.findByProducto(producto)) {
             ComentarioDto comentarioDto = new ComentarioDto();
             comentarioDto.setIdComentario(comentarioBD.getIdComentario());
@@ -66,6 +77,11 @@ public class ComentarioService {
             comentarioDto.setUsuario(comentarioBD.getUsuario().getIdUsuario());
             comentariosObtenidos.add(comentarioDto);
         }
-        return comentariosObtenidos;
+
+        respuesta.setExito(true);
+        respuesta.getDatos().add(comentariosObtenidos);
+        respuesta.setMensaje(Constantes.EXITO_COMENTARIOS_CONSULTADOS);
+
+        return respuesta;
     }
 }

@@ -13,12 +13,13 @@ import com.braulio.tienda.data.Usuario;
 import com.braulio.tienda.data.dto.CarritoDto;
 import com.braulio.tienda.data.dto.DetalleCarritoDto;
 import com.braulio.tienda.data.dto.ProductoDto;
-
+import com.braulio.tienda.data.dto.RespuestaGenerica;
 import com.braulio.tienda.exceptions.OutOfStockException;
 import com.braulio.tienda.repository.CarritoRepository;
 import com.braulio.tienda.repository.DetalleCarritoRepository;
 import com.braulio.tienda.repository.ProductoRepository;
 import com.braulio.tienda.repository.UsuarioRepository;
+import com.braulio.tienda.utils.Constantes;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -34,7 +35,7 @@ public class CarritoService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    public List<ProductoDto> obtenerCarrito(Integer idUsuario){
+    public RespuestaGenerica obtenerCarrito(Integer idUsuario){
 
         Usuario usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));
@@ -44,6 +45,7 @@ public class CarritoService {
         }
         Carrito carrito = (carritoRepository.findByUsuario(usuario)).get(0);
 
+        RespuestaGenerica respuesta = new RespuestaGenerica();
         List<DetalleCarrito> productos = detalleCarritoRepository.findByCarritoAndActive(carrito,true);
         DetalleCarritoDto detalleCarritoDto = new DetalleCarritoDto();
         detalleCarritoDto.setCarrito(carrito);
@@ -64,10 +66,14 @@ public class CarritoService {
             productoDto.setTienda(objetoDetalleCarrito.getProducto().getTienda().getIdTienda());
             listaProductos.add(productoDto);
         }
-        return listaProductos;
+
+        respuesta.setExito(true);
+        respuesta.setMensaje(Constantes.EXITO_CARRITO_OBTENIDO);
+        respuesta.getDatos().add(listaProductos);
+        return respuesta;
     }
 
-    public List<ProductoDto> agregarProductoACarrito(CarritoDto carritoDto){
+    public RespuestaGenerica agregarProductoACarrito(CarritoDto carritoDto){
         Usuario usuario = usuarioRepository.findById(carritoDto.getUsuario())
             .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));;
         List<Carrito> userCarrito = carritoRepository.findByUsuario(usuario);
