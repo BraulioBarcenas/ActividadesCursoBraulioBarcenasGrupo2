@@ -39,6 +39,21 @@ public class ProductoDtoTest {
         
         assertTrue(violations.isEmpty());
     }
+    
+    @Test
+    public void validProductoDtoAddStockTest(){
+        ProductoDtoAddStock productoDtoAddStock = new ProductoDtoAddStock();
+        
+        productoDtoAddStock.setIdProducto(2);
+        productoDtoAddStock.setStock(10);
+
+
+
+        Set<ConstraintViolation<ProductoDtoAddStock>> violations = validator.validate(productoDtoAddStock);
+        
+        assertTrue(violations.isEmpty());
+        
+    }
 
     @Test
     public void invalidProductoDtoTest(){
@@ -48,5 +63,16 @@ public class ProductoDtoTest {
         Set<ConstraintViolation<ProductoDto>> violations = validator.validate(productoDto);
         
         assertEquals(6,violations.size());    
+    }
+    
+    
+    @Test
+    public void invalidProductoDtoAddStock(){
+        ProductoDtoAddStock productoDtoAddStock = new ProductoDtoAddStock();
+        
+        Set<ConstraintViolation<ProductoDtoAddStock>> violations = validator.validate(productoDtoAddStock);
+        
+        assertEquals(2,violations.size());    
+
     }
 }

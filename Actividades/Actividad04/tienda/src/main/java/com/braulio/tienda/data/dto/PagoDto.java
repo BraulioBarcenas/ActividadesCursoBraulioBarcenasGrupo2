@@ -17,6 +17,8 @@ public class PagoDto implements Serializable{
     private double cargo;
     @NotBlank(message = "Inserta un numero de cuenta")
     private String numCuenta;
+
+
     public PagoDto(String plataforma, Date fecha, double cargo, String numCuenta) {
         this.plataforma = plataforma;
         this.fecha = fecha;
