@@ -10,7 +10,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
+
 public class UsuarioDto implements Serializable{
+
+    
     private Integer idUsuario;
     @NotBlank(message = "Ingresa un nombre")
     @Size(min = 1,max = 45,message = "Introduzca un tamaño correcto de cadena")
@@ -24,6 +27,7 @@ public class UsuarioDto implements Serializable{
     @NotBlank(message = "Ingresa un email")
     private String email;
 
+    
 
     public UsuarioDto(){
         
