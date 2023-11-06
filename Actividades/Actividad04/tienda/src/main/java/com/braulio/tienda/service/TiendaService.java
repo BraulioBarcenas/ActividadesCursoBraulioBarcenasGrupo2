@@ -47,7 +47,7 @@ public class TiendaService {
 
         newTienda.setNombre(tiendaDto.getNombre());
         newTienda.setDescripcion(tiendaDto.getDescripcion());
-        newTienda.setUsuario(buscarUsuarioPorId(tiendaDto.getUsuario()));
+        newTienda.setUsuario(usuario);
         tiendaRepository.save(newTienda);
         tiendaDto.setIdTienda(newTienda.getIdTienda());
 
@@ -57,9 +57,9 @@ public class TiendaService {
         return respuesta;
     }
 
-    private Usuario buscarUsuarioPorId(int idUsuario){
-         Usuario usuario = usuarioRepository.findById(idUsuario)
-            .orElseThrow(()-> new DupedEntityException("El usuario no existe."));
-        return usuario;
-    }
+    // private Usuario buscarUsuarioPorId(int idUsuario){
+    //      Usuario usuario = usuarioRepository.findById(idUsuario)
+    //         .orElseThrow(()-> new DupedEntityException("El usuario no existe."));
+    //     return usuario;
+    // }
 }

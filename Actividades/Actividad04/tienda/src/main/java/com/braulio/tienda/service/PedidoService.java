@@ -43,7 +43,6 @@ public class PedidoService {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private ProductoRepository productoRepository;
-
     @Autowired
     private CarritoRepository carritoRepository;
     @Autowired

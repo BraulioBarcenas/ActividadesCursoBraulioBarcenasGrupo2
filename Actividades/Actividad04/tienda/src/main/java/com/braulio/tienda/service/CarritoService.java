@@ -3,6 +3,7 @@ package com.braulio.tienda.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,10 +39,10 @@ public class CarritoService {
     public RespuestaGenerica obtenerCarrito(Integer idUsuario){
 
         Usuario usuario = usuarioRepository.findById(idUsuario)
-            .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));
+            .orElseThrow(()-> new EntityNotFoundException(Constantes.USUARIO_NO_EXISTENTE));
         List<Carrito> carritoFound = carritoRepository.findByUsuario(usuario);
         if (carritoFound.size() < 1 ) {
-            throw new EntityNotFoundException("Carrito no disponible");
+            throw new EntityNotFoundException(Constantes.CARRITO_NO_DISPONIBLE);
         }
         Carrito carrito = (carritoRepository.findByUsuario(usuario)).get(0);
 
@@ -75,13 +76,13 @@ public class CarritoService {
 
     public RespuestaGenerica agregarProductoACarrito(CarritoDto carritoDto){
         Usuario usuario = usuarioRepository.findById(carritoDto.getUsuario())
-            .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));;
+            .orElseThrow(()-> new EntityNotFoundException(Constantes.USUARIO_NO_EXISTENTE));;
         List<Carrito> userCarrito = carritoRepository.findByUsuario(usuario);
 
 
         if (userCarrito.size() > 0) {
             Producto producto = productoRepository.findById(carritoDto.getProducto())
-            .orElseThrow(()-> new EntityNotFoundException("El producto no existe ya tiene carro"));
+            .orElseThrow(()-> new EntityNotFoundException(Constantes.PRODUCTO_NO_EXISTENTE));
 
             List<DetalleCarrito> productoInCarrito = detalleCarritoRepository.findByProductoAndActive(producto, true);
 
@@ -94,7 +95,7 @@ public class CarritoService {
                     productoInCarrito.get(0).setStock(stockARevisar);
                     detalleCarritoRepository.save(productoInCarrito.get(0));
                 }else{
-                    throw new OutOfStockException("Cantidad de productos mayor al stock disponible");
+                    throw new OutOfStockException(Constantes.STOCK_EXCEDENTE);
                 }
 
 
@@ -114,7 +115,7 @@ public class CarritoService {
             return obtenerCarrito(usuario.getIdUsuario());
         }else{
             Producto producto = productoRepository.findById(carritoDto.getProducto())
-            .orElseThrow(()-> new EntityNotFoundException("El producto no existe nuevo carro."));
+            .orElseThrow(()-> new EntityNotFoundException(Constantes.PRODUCTO_NO_EXISTENTE));
             Integer stockARevisar = carritoDto.getStock();
             Boolean disponibleAComprar = revisarStock(producto.getIdProducto(), stockARevisar);
             
@@ -135,7 +136,7 @@ public class CarritoService {
                 
                 return obtenerCarrito(usuario.getIdUsuario());
             }else{
-                throw new OutOfStockException("Cantidad de productos mayor al stock disponible");
+                throw new OutOfStockException(Constantes.STOCK_EXCEDENTE);
             }
             
         }
@@ -144,7 +145,7 @@ public class CarritoService {
 
     public boolean revisarStock(Integer idProducto, Integer StockARevisar){
         Producto producto = productoRepository.findById(idProducto)
-            .orElseThrow(()-> new EntityNotFoundException("El producto no existe revisar stock"));
+            .orElseThrow(()-> new EntityNotFoundException(Constantes.PRODUCTO_SIN_STOCK_O_INEXISTENTE));
 
         if (StockARevisar > producto.getStock()) {
             return false;
