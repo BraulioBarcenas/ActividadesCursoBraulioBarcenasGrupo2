@@ -28,5 +28,6 @@ public class Constantes {
 
     public static final String USUARIO_CONTRASENA_INCORRECTA = "Usuario y/o contraseña incorrectos";
     public static final String EXITO_TOKEN_GENERADO = "Token creado exitosamente";
+    public static final String COMPRA_DESDE_MISMA_TIENDA = "No puedes comprar un articulo desde tu propia tienda";
 
 }

@@ -79,4 +79,15 @@ public class CustomExceptionHandler {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         return new ResponseEntity<>(new ErrorResponse(status, ex.getMessage()), status);
     }
+
+
+    @ExceptionHandler(OwnStoreException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ResponseEntity<ErrorResponse> handleOwnStoreException(OwnStoreException ex){
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return new ResponseEntity<>(new ErrorResponse(status, ex.getMessage()), status);
+    }
+
+    
 }

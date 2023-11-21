@@ -15,6 +15,7 @@ import com.braulio.tienda.data.dto.DetalleCarritoDto;
 import com.braulio.tienda.data.dto.ProductoDto;
 import com.braulio.tienda.data.dto.RespuestaGenerica;
 import com.braulio.tienda.exceptions.OutOfStockException;
+import com.braulio.tienda.exceptions.OwnStoreException;
 import com.braulio.tienda.repository.CarritoRepository;
 import com.braulio.tienda.repository.DetalleCarritoRepository;
 import com.braulio.tienda.repository.ProductoRepository;
@@ -79,9 +80,14 @@ public class CarritoService {
         List<Carrito> userCarrito = carritoRepository.findByUsuario(usuario);
 
 
+        // Tiene carrito
         if (userCarrito.size() > 0) {
             Producto producto = productoRepository.findById(carritoDto.getProducto())
             .orElseThrow(()-> new EntityNotFoundException(Constantes.PRODUCTO_NO_EXISTENTE));
+
+            if (producto.getTienda().getUsuario().equals(usuario)) {
+                throw new OwnStoreException(Constantes.COMPRA_DESDE_MISMA_TIENDA);
+            }
 
             List<DetalleCarrito> productoInCarrito = detalleCarritoRepository.findByProductoAndActive(producto, true);
 
@@ -112,9 +118,14 @@ public class CarritoService {
             }
             
             return obtenerCarrito(usuario.getIdUsuario());
+
+        // Creación de carrito
         }else{
             Producto producto = productoRepository.findById(carritoDto.getProducto())
             .orElseThrow(()-> new EntityNotFoundException(Constantes.PRODUCTO_NO_EXISTENTE));
+            if (producto.getTienda().getUsuario().equals(usuario)) {
+                throw new OwnStoreException(Constantes.COMPRA_DESDE_MISMA_TIENDA);
+            }
             Integer stockARevisar = carritoDto.getStock();
             Boolean disponibleAComprar = revisarStock(producto.getIdProducto(), stockARevisar);
             

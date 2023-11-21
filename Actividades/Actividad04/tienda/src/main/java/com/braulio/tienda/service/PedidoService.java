@@ -19,6 +19,7 @@ import com.braulio.tienda.data.dto.EnvioDto;
 import com.braulio.tienda.data.dto.PagoDto;
 import com.braulio.tienda.data.dto.PedidoDto;
 import com.braulio.tienda.data.dto.RespuestaGenerica;
+import com.braulio.tienda.exceptions.OwnStoreException;
 import com.braulio.tienda.repository.CarritoRepository;
 import com.braulio.tienda.repository.DetalleCarritoRepository;
 import com.braulio.tienda.repository.EnvioRepository;
@@ -77,9 +78,10 @@ public class PedidoService {
     public RespuestaGenerica nuevoPedido(PedidoDto pedidoDto){
         double IVA = 0.16;
         Usuario usuario = usuarioRepository.findById(pedidoDto.getUsuario())
-            .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));
+            .orElseThrow(()-> new EntityNotFoundException(Constantes.USUARIO_NO_EXISTENTE));
 
         RespuestaGenerica respuesta = new RespuestaGenerica();
+
         
         Pedido newPedido = new Pedido();
         newPedido.setFecha(new Date());
@@ -87,17 +89,20 @@ public class PedidoService {
         Integer total = 0;
         List<Carrito> carrito = carritoRepository.findByUsuario(usuario);
         if (carrito == null || carrito.isEmpty()) {
-            throw new EntityNotFoundException("El usuario no tiene articulos en su carrito.");
+            throw new EntityNotFoundException(Constantes.CARRITO_NO_DISPONIBLE);
         }
 
         List<DetalleCarrito> productos = detalleCarritoRepository.findByCarritoAndActive(carrito.get(0),true);
         if (productos == null || productos.isEmpty()) {
-            throw new EntityNotFoundException("El usuario no tiene articulos en su carrito.");
+            throw new EntityNotFoundException(Constantes.CARRITO_NO_DISPONIBLE);
         }
 
         for (DetalleCarrito itemCarrito : productos) {
             Producto producto = productoRepository.findById(itemCarrito.getProducto().getIdProducto())
-            .orElseThrow(()-> new EntityNotFoundException("El producto no existe."));
+            .orElseThrow(()-> new EntityNotFoundException(Constantes.PRODUCTO_NO_EXISTENTE));
+            if (producto.getTienda().getUsuario().equals(usuario)) {
+                throw new OwnStoreException(Constantes.COMPRA_DESDE_MISMA_TIENDA);
+            }
             producto.setStock(producto.getStock()- itemCarrito.getStock());
             total += itemCarrito.getProducto().getPrecio()*itemCarrito.getStock();
         }

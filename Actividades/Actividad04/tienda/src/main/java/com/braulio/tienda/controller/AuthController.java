@@ -1,7 +1,6 @@
 package com.braulio.tienda.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.braulio.tienda.data.dto.CredencialesDto;
 import com.braulio.tienda.data.dto.RespuestaGenerica;
 import com.braulio.tienda.service.AuthenticationService;
-import com.braulio.tienda.service.JwtService;
 
 import jakarta.validation.Valid;
 
