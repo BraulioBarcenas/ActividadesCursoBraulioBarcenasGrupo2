@@ -25,4 +25,8 @@ public class Constantes {
     public static final String EXITO_COMENTARIOS_CONSULTADOS = "Los comentarios han sido consultados correctamente";
     public static final String EXITO_CARRITO_OBTENIDO = "Carrito obtenido con exito";
 
+
+    public static final String USUARIO_CONTRASENA_INCORRECTA = "Usuario y/o contraseña incorrectos";
+    public static final String EXITO_TOKEN_GENERADO = "Token creado exitosamente";
+
 }

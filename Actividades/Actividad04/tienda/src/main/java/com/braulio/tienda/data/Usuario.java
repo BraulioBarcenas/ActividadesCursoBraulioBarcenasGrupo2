@@ -32,8 +32,6 @@ public class Usuario {
     @Column(name = "usuEmail", length = 45,nullable = false )
     private String email;
     
-    
-    
     @Column(name = "usuPassword", length = 255,nullable = false )
     private String password;
 }
