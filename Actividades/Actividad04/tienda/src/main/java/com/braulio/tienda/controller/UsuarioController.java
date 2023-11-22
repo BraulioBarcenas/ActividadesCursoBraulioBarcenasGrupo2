@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +47,20 @@ public class UsuarioController {
     @PostMapping("/guardarUsuarios")
     public ResponseEntity<RespuestaGenerica> saveUser(@Valid @RequestBody UsuarioDtoPass dto){
         RespuestaGenerica respuesta = usuarioService.guardarUsuario(dto);
+        HttpStatus status = null;
+        if (respuesta.isExito()) {
+            status = HttpStatus.OK;
+            respuesta.setCodigo(status.value());
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+            respuesta.setCodigo(status.value());
+        }
+        return new ResponseEntity<>(respuesta,status);
+    }
+
+    @PutMapping("/actualizarUsuario")
+    public ResponseEntity<RespuestaGenerica> updateUser(@Valid @RequestBody UsuarioDtoPass dto){
+        RespuestaGenerica respuesta = usuarioService.actualizarUsuario(dto);
         HttpStatus status = null;
         if (respuesta.isExito()) {
             status = HttpStatus.OK;
