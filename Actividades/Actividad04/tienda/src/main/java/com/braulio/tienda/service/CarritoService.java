@@ -15,6 +15,7 @@ import com.braulio.tienda.data.dto.DetalleCarritoDto;
 import com.braulio.tienda.data.dto.ProductoDto;
 import com.braulio.tienda.data.dto.RespuestaGenerica;
 import com.braulio.tienda.exceptions.OutOfStockException;
+import com.braulio.tienda.exceptions.OwnStoreException;
 import com.braulio.tienda.repository.CarritoRepository;
 import com.braulio.tienda.repository.DetalleCarritoRepository;
 import com.braulio.tienda.repository.ProductoRepository;
@@ -38,10 +39,10 @@ public class CarritoService {
     public RespuestaGenerica obtenerCarrito(Integer idUsuario){
 
         Usuario usuario = usuarioRepository.findById(idUsuario)
-            .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));
+            .orElseThrow(()-> new EntityNotFoundException(Constantes.USUARIO_NO_EXISTENTE));
         List<Carrito> carritoFound = carritoRepository.findByUsuario(usuario);
         if (carritoFound.size() < 1 ) {
-            throw new EntityNotFoundException("Carrito no disponible");
+            throw new EntityNotFoundException(Constantes.CARRITO_NO_DISPONIBLE);
         }
         Carrito carrito = (carritoRepository.findByUsuario(usuario)).get(0);
 
@@ -75,13 +76,18 @@ public class CarritoService {
 
     public RespuestaGenerica agregarProductoACarrito(CarritoDto carritoDto){
         Usuario usuario = usuarioRepository.findById(carritoDto.getUsuario())
-            .orElseThrow(()-> new EntityNotFoundException("El usuario no existe."));;
+            .orElseThrow(()-> new EntityNotFoundException(Constantes.USUARIO_NO_EXISTENTE));;
         List<Carrito> userCarrito = carritoRepository.findByUsuario(usuario);
 
 
+        // Tiene carrito
         if (userCarrito.size() > 0) {
             Producto producto = productoRepository.findById(carritoDto.getProducto())
-            .orElseThrow(()-> new EntityNotFoundException("El producto no existe ya tiene carro"));
+            .orElseThrow(()-> new EntityNotFoundException(Constantes.PRODUCTO_NO_EXISTENTE));
+
+            if (producto.getTienda().getUsuario().equals(usuario)) {
+                throw new OwnStoreException(Constantes.COMPRA_DESDE_MISMA_TIENDA);
+            }
 
             List<DetalleCarrito> productoInCarrito = detalleCarritoRepository.findByProductoAndActive(producto, true);
 
@@ -94,7 +100,7 @@ public class CarritoService {
                     productoInCarrito.get(0).setStock(stockARevisar);
                     detalleCarritoRepository.save(productoInCarrito.get(0));
                 }else{
-                    throw new OutOfStockException("Cantidad de productos mayor al stock disponible");
+                    throw new OutOfStockException(Constantes.STOCK_EXCEDENTE);
                 }
 
 
@@ -112,9 +118,14 @@ public class CarritoService {
             }
             
             return obtenerCarrito(usuario.getIdUsuario());
+
+        // Creación de carrito
         }else{
             Producto producto = productoRepository.findById(carritoDto.getProducto())
-            .orElseThrow(()-> new EntityNotFoundException("El producto no existe nuevo carro."));
+            .orElseThrow(()-> new EntityNotFoundException(Constantes.PRODUCTO_NO_EXISTENTE));
+            if (producto.getTienda().getUsuario().equals(usuario)) {
+                throw new OwnStoreException(Constantes.COMPRA_DESDE_MISMA_TIENDA);
+            }
             Integer stockARevisar = carritoDto.getStock();
             Boolean disponibleAComprar = revisarStock(producto.getIdProducto(), stockARevisar);
             
@@ -135,7 +146,7 @@ public class CarritoService {
                 
                 return obtenerCarrito(usuario.getIdUsuario());
             }else{
-                throw new OutOfStockException("Cantidad de productos mayor al stock disponible");
+                throw new OutOfStockException(Constantes.STOCK_EXCEDENTE);
             }
             
         }
@@ -144,7 +155,7 @@ public class CarritoService {
 
     public boolean revisarStock(Integer idProducto, Integer StockARevisar){
         Producto producto = productoRepository.findById(idProducto)
-            .orElseThrow(()-> new EntityNotFoundException("El producto no existe revisar stock"));
+            .orElseThrow(()-> new EntityNotFoundException(Constantes.PRODUCTO_SIN_STOCK_O_INEXISTENTE));
 
         if (StockARevisar > producto.getStock()) {
             return false;

@@ -228,6 +228,7 @@ CREATE TABLE IF NOT EXISTS `tienda`.`detalle_carrito` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+INSERT INTO tienda.usuarios VALUES ('1', 'admin', 'admin', 'admin', 'admin@example.com', '$2a$10$C.PZwwGuXpLWSlbVXSDMYOcP1.sQtocoeL71WxfxgUet/1iFDsGAa');
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

@@ -51,7 +51,7 @@ public class ProductoService {
     public RespuestaGenerica agregarStock(ProductoDtoAddStock productoDto){
 
         Producto producto = productoRepository.findById(productoDto.getIdProducto())
-        .orElseThrow(()-> new EntityNotFoundException("El producto no existe."));
+        .orElseThrow(()-> new EntityNotFoundException(Constantes.PRODUCTO_NO_EXISTENTE));
         ProductoDto returnProductoDto = new ProductoDto();
         RespuestaGenerica respuesta = new RespuestaGenerica();
 
@@ -81,7 +81,7 @@ public class ProductoService {
 
     private Tienda buscarTiendaPorId(int idTienda){
          Tienda tienda = tiendaRepository.findById(idTienda)
-            .orElseThrow(()-> new EntityNotFoundException("La tienda no existe."));
+            .orElseThrow(()-> new EntityNotFoundException(Constantes.TIENDA_NO_EXISTENTE));
         return tienda;
     }
 }
